@@ -4,36 +4,41 @@ build:buildhtml5 buildandroid buildflash buildlinux buildwindows
 
 buildhtml5:
 	haxelib run nme build $(NMML) html5
-	cp -R data/map bin/html5/bin/data
+	neko html5bugfix.n bin/html5/bin/hxMario.js
 
 buildandroid:
 	haxelib run nme build $(NMML) android
-	cp -R data/map bin/android/bin/data
 
 buildflash:
 	haxelib run nme build $(NMML) flash
-	cp -R data/map bin/flash/bin/data
 
 buildlinux:
 	haxelib run nme build $(NMML) linux
-	cp -R data/map bin/cpp/linux/bin/data
 
 buildwindows:
 	haxelib run nme build $(NMML) windows
-	cp -R data/map bin/neko/windows/bin/data
 
-html5: buildhtml5
-	haxelib run nme run $(NMML) $@
+html5: buildhtml5 runhtml5
 
-android: buildandroid
-	haxelib run nme run $(NMML) $@
+android: buildandroid runandroid
 
-flash: buildflash
-	haxelib run nme run $(NMML) $@
+flash: buildflash runflash
 
-linux: buildlinux
-	haxelib run nme run $(NMML) $@
+linux: buildlinux runlinux
 
-windows: buildwindows
-	haxelib run nme run $(NMML) $@
+windows: buildwindows runwindows
 
+runhtml5:
+	haxelib run nme run $(NMML) html5
+
+runandroid:
+	haxelib run nme run $(NMML) android
+
+runflash:
+	haxelib run nme run $(NMML) flash
+
+runlinux:
+	haxelib run nme run $(NMML) linux
+
+runwindows:
+	haxelib run nme run $(NMML) windows
