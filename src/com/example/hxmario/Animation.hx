@@ -24,8 +24,6 @@ class Animation extends Sprite
 		this.width = map.tileWidth;
 		this.height = map.tileHeight;
 
-		trace("this : (" + this.x + ";" + this.y + ")");
-
 		pos = -1;
 		prev = -1;
 		bitmaps = [];
@@ -59,7 +57,7 @@ class Animation extends Sprite
 			bitmaps[pos].x = this.x;
 			bitmaps[pos].y = this.y;
 
-			nme.Lib.current.addChild(bitmaps[pos]);
+			nme.Lib.current.addChildAt(bitmaps[pos], 1);
 		#else
 			addChild(bitmaps[pos]);
 		#end

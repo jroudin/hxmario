@@ -24,8 +24,14 @@ class Mario extends Sprite
 	var map:TmxMap;
 	var animatedTiles:Array<Array<Int>>; // Using GID
 	var staticTiles:Array<Point>; // Using coordinates
+	var collisions:Array<Array<Bool>>;
 	var objects:Array<Animation>;
 	var timer:Timer;
+
+	public var tileWidth(getTileWidth, null):Int;
+	public var tileHeight(getTileHeight, null):Int;
+
+	private static inline var TIME:Int = 100;
 
 	public function new()
 	{
@@ -35,9 +41,20 @@ class Mario extends Sprite
 		addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 	}
 
+	public function getTileWidth():Int
+	{
+		return map.tileWidth;
+	}
+
+	public function getTileHeight():Int
+	{
+		return map.tileHeight;
+	}
+
 	private function onAddedToStage(_:Event):Void
 	{
 		construct();
+		new Player(this);
 	}
 
 	public function constructAnimatedTiles(group:TmxObjectGroup):Void
@@ -75,6 +92,31 @@ class Mario extends Sprite
 		return null;
 	}
 
+	public function getCollisions():Array<Array<Bool>>
+	{
+		return collisions;
+	}
+
+	private function constructCollisions():Void
+	{
+		var layer = map.layers.get("collisions");
+		collisions = [];
+		for (j in 0...layer.tileGIDs.length)
+		{
+			var arr = [];
+			for(i in 0...layer.tileGIDs[j].length)
+			{
+				var gid = layer.tileGIDs[j][i];
+				var tileset = map.getGidOwner(gid);
+				if (tileset == null)
+					arr.push(true);
+				else 
+					arr.push(tileset.fromGid(gid) == 0);
+			}
+			collisions.push(arr);
+		}
+	}
+
 	private function constructTiles():Void
 	{
 		var layer = map.layers.get("graphics");
@@ -104,10 +146,7 @@ class Mario extends Sprite
 		addChild(bmp);
 
 		for(object in objects)
-		{
-			//trace(object);
 			nme.Lib.current.addChild(object);
-		}
 	}
 
 	private function construct():Void
@@ -118,12 +157,13 @@ class Mario extends Sprite
 		objects = [];
 		readObjects();
 		constructTiles();
+		constructCollisions();
 		initTimer();
 	}
 
 	private function initTimer():Void
 	{
-		timer = new Timer(120);
+		timer = new Timer(TIME);
 		timer.addEventListener(TimerEvent.TIMER, onTime);
 		timer.start();
 	}
@@ -141,6 +181,6 @@ class Mario extends Sprite
 	public static function main():Void
 	{
 		trace("Hello World ! ");
-		Lib.current.addChild(new Mario());
+		Lib.current.addChildAt(new Mario(), 0);
 	}
 }
